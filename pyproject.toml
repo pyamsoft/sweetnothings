@@ -12,6 +12,7 @@ requests = "==2.31.0"
 av = "==10.0.0"
 stable-ts = "==2.13.1"
 faster-whisper = "==0.9.0"
+torch = "2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["d"], version = "==23.10.1" }

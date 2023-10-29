@@ -22,4 +22,5 @@ COPY sweetnothings ./sweetnothings
 # Install file
 RUN /root/.local/bin/poetry install
 
-ENTRYPOINT [ "python3", "-u", "main.py" ]
+# Run the main file in the virtualenv
+ENTRYPOINT [ "/root/.local/bin/poetry", "run", "python3", "-u", "main.py" ]

@@ -11,17 +11,24 @@ def _log(*args: Any):
 
 
 def main():
-    args = sys.argv
-    if not args or len(args) <= 1:
+    # Remove ourself
+    args = sys.argv[1:]
+
+    if not args or len(args) <= 0:
         _log("Must provide at least one file path to a video file.")
         return
 
     model = SweetNothings()
     try:
+        _log("Processing possible video files: ", args)
         for file_path in args:
-            model.generate_subtitles(
+            result = model.generate_subtitles(
                 path=file_path,
             )
+            if result:
+                _log("Generated subtitles for ", file_path)
+            else:
+                _log("Failed to generate subtitles for ", file_path)
     finally:
         model.destroy()
 

@@ -6,4 +6,6 @@ if command -v podman >/dev/null; then
 fi
 
 # shellcheck disable=SC2086
-exec ${_cmd} run --rm -i -t localhost/pyamsoft/sweet-nothings "$@"
+exec ${_cmd} run --rm -i -t \
+  --entrypoint /bin/bash \
+  localhost/pyamsoft/sweet-nothings "$@"
