@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "sweetnothings"
+version = "0.0.1"
+description = "AI generated subtitles"
+authors = ["pyamsoft"]
+license = "Apache-2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "==2.31.0"
+av = "==10.0.0"
+stable-ts = "==2.13.1"
+faster-whisper = "==0.9.0"
+
+[tool.poetry.group.dev.dependencies]
+black = { extras = ["d"], version = "==23.10.1" }
+setuptools = "==68.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
