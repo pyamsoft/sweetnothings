@@ -52,7 +52,11 @@ class AiModel:
 
     def _get_transcribed_file_extension(self) -> str:
         model_name = self._whisper_model.split(".")[0]
-        return f".sn.{model_name}.{self._namesublang}.srt"
+        return f".sweetnothings.{model_name}.{self._namesublang}.srt"
+
+    @classmethod
+    def _get_file_name_remove_extension(cls, path: str):
+        return os.path.splitext(path)[0]
 
     def destroy(self):
         # noinspection PyBroadException
@@ -68,7 +72,10 @@ class AiModel:
 
     def transcribe(self, path: str) -> bool:
         # Make sure we don't already have a generated file
-        new_path = path.rsplit(".", 1)[0] + self._get_transcribed_file_extension()
+        new_path = (
+            self._get_file_name_remove_extension(path)
+            + self._get_transcribed_file_extension()
+        )
         if os.path.exists(new_path):
             self._log(f"{path} already has generated subtitle. Skip.")
             return False
@@ -77,6 +84,8 @@ class AiModel:
         if not self._ensure_load_model():
             self._log("Failed to load whisper model", self._whisper_model)
             return False
+
+        self._log("Transcribe new subtitles to: ", new_path)
 
         # noinspection PyBroadException
         try:
