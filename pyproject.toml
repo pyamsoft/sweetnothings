@@ -2,7 +2,7 @@
 name = "sweetnothings"
 version = "0.0.1"
 description = "AI generated subtitles"
-authors = ["pyamsoft"]
+authors = ["pyamsoft <developer.pyamsoft@gmail.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 
