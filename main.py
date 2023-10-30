@@ -63,6 +63,8 @@ class Main:
                 cls._log("Processing possible video files: ", paths)
                 for file_path in paths:
                     status.write(f"Processing file: {file_path}\n")
+                    status.flush()
+
                     result = model.generate_subtitles(
                         path=file_path,
                     )
@@ -73,6 +75,7 @@ class Main:
                         cls._log("Failed to generate subtitles for ", file_path)
                         status.write(f"Subtitles failed: {file_path}\n")
                     status.write("\n")
+                    status.flush()
             finally:
                 model.destroy()
 
