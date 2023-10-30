@@ -22,11 +22,14 @@ class Locker:
     def with_lock(
         cls,
         files: List[str],
-        on_lock_claimed: Callable[[List[str]], None],
+        on_lock_claimed: Callable[[Path, List[str]], None],
     ) -> bool:
         p = Path(cls._LOCK_FILE_PATH)
         if p.exists():
             cls._log("Lock file is already claimed by a different process")
+            current_status = p.read_text()
+            cls._log("Current Status === ")
+            print(current_status)
             return False
 
         # noinspection PyBroadException
@@ -34,7 +37,7 @@ class Locker:
             cls._log("Claim lock file", cls._LOCK_FILE_PATH)
             p.touch()
 
-            on_lock_claimed(files)
+            on_lock_claimed(p, files)
             return True
         except Exception as _:
             print_exc()
@@ -49,20 +52,29 @@ class Main:
         print("[Main]: ", *args)
 
     @classmethod
-    def _run_generator(cls, paths: List[str]):
+    def _run_generator(
+        cls,
+        lockfile: Path,
+        paths: List[str],
+    ):
         model = SweetNothings()
-        try:
-            cls._log("Processing possible video files: ", paths)
-            for file_path in paths:
-                result = model.generate_subtitles(
-                    path=file_path,
-                )
-                if result:
-                    cls._log("Generated subtitles for ", file_path)
-                else:
-                    cls._log("Failed to generate subtitles for ", file_path)
-        finally:
-            model.destroy()
+        with lockfile.open(mode="a") as status:
+            try:
+                cls._log("Processing possible video files: ", paths)
+                for file_path in paths:
+                    status.write(f"Processing file: {file_path}\n")
+                    result = model.generate_subtitles(
+                        path=file_path,
+                    )
+                    if result:
+                        cls._log("Generated subtitles for ", file_path)
+                        status.write(f"Subtitles generated: {file_path}\n")
+                    else:
+                        cls._log("Failed to generate subtitles for ", file_path)
+                        status.write(f"Subtitles failed: {file_path}\n")
+                    status.write("\n")
+            finally:
+                model.destroy()
 
     @classmethod
     def main(cls, paths: List[str]) -> bool:
