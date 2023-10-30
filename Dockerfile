@@ -18,9 +18,8 @@ COPY pyproject.toml ./
 COPY README.md ./
 COPY LICENSE ./
 COPY sweetnothings ./sweetnothings
-
-# Install file
-RUN /root/.local/bin/poetry install
+COPY bin/runner /root/.local/bin/runner
 
 # Run the main file in the virtualenv
-ENTRYPOINT [ "/root/.local/bin/poetry", "run", "python3", "-u", "main.py" ]
+# Run the installer like this in the entrypoint to avoid the actual image being too large
+ENTRYPOINT [ "/root/.local/bin/runner" ]

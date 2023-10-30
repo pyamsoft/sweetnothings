@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-
 import sys
 import tempfile
 
 from pathlib import Path
+from traceback import print_exc
 from typing import Any, List, Callable
 
 from sweetnothings.sweetnothings import SweetNothings
@@ -21,18 +21,23 @@ class Locker:
         cls,
         files: List[str],
         on_lock_claimed: Callable[[List[str]], None],
-    ):
+    ) -> bool:
         p = Path(cls._LOCK_FILE_PATH)
         if p.exists():
             cls._log("Lock file is already claimed by a different process")
-            return
+            return False
 
-        cls._log("Claim lock file", cls._LOCK_FILE_PATH)
-        lock_file = p.open()
+        # noinspection PyBroadException
         try:
+            cls._log("Claim lock file", cls._LOCK_FILE_PATH)
+            p.touch()
+           
             on_lock_claimed(files)
+            return True
+        except Exception as _:
+            print_exc()
+            return False
         finally:
-            lock_file.close()
             p.unlink()
 
 
@@ -58,8 +63,8 @@ class Main:
             model.destroy()
 
     @classmethod
-    def main(cls, paths: List[str]):
-        Locker.with_lock(paths, cls._run_generator)
+    def main(cls, paths: List[str]) -> bool:
+        return Locker.with_lock(paths, cls._run_generator)
 
 
 if __name__ == "__main__":
@@ -69,4 +74,7 @@ if __name__ == "__main__":
     if not args or len(args) <= 0:
         print("SweetNothings: Must provide at least one file path to a video file.")
     else:
-        Main.main(args)
+        if Main.main(args):
+            sys.exit(0)
+        else:
+            sys.exit(1)

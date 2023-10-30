@@ -2,8 +2,14 @@
 
 readonly _cmd="podman"
 
+# Mount a data directory for the whisper model
+# Mount a cache directory for the pypoetry deps
+mkdir -p "./data"
+mkdir -p "./cache"
+
 # shellcheck disable=SC2086
 exec ${_cmd} run --rm -i -t \
   -e MODEL_PATH="./data" \
   --mount "type=bind,source=./data,target=/sweet-nothings/data" \
+  --mount "type=bind,source=./cache,target=/root/.cache" \
   localhost/pyamsoft/sweet-nothings "$@"
