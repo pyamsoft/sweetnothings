@@ -51,8 +51,7 @@ class AiModel:
             return False
 
     def _get_transcribed_file_extension(self) -> str:
-        model_name = self._whisper_model.split(".")[0]
-        return f".sweetnothings.{model_name}.{self._namesublang}.srt"
+        return f".AI-Generated.{self._namesublang}.srt"
 
     @classmethod
     def _get_file_name_remove_extension(cls, path: str):
