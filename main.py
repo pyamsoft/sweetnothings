@@ -8,11 +8,12 @@ from typing import Any, List, Callable
 
 from sweetnothings.sweetnothings import SweetNothings
 
-_XDG_CACHE_HOME = os.getenv("XDG_CACHE_HOME", f"{Path.home()}")
+_HOME_CACHE = Path.home() / ".cache"
+_XDG_CACHE_HOME = os.getenv("XDG_CACHE_HOME", f"{str(_HOME_CACHE)}")
 
 
 class Locker:
-    _LOCK_FILE_PATH = f"{_XDG_CACHE_HOME}/.cache/sweet-nothings.lock"
+    _LOCK_FILE_PATH = f"{_XDG_CACHE_HOME}/sweet-nothings.lock"
 
     @classmethod
     def _log(cls, *args: Any):
