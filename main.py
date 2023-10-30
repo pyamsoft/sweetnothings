@@ -13,7 +13,7 @@ _XDG_CACHE_HOME = os.getenv("XDG_CACHE_HOME", f"{str(_HOME_CACHE)}")
 
 
 class Locker:
-    _LOCK_FILE_PATH = f"{_XDG_CACHE_HOME}/sweet-nothings.lock"
+    _LOCK_FILE_PATH = f"{_XDG_CACHE_HOME}/.cache/sweet-nothings.lock"
 
     @classmethod
     def _log(cls, *args: Any):
@@ -28,6 +28,9 @@ class Locker:
         p = Path(cls._LOCK_FILE_PATH)
         if p.exists():
             cls._log("Lock file is already claimed by a different process")
+            current_status = p.read_text()
+            cls._log("Current Status === ")
+            print(current_status)
             return False
 
         # noinspection PyBroadException
@@ -55,21 +58,27 @@ class Main:
         lockfile: Path,
         paths: List[str],
     ):
-        _ = lockfile
-
         model = SweetNothings()
-        try:
-            cls._log("Processing possible video files: ", paths)
-            for file_path in paths:
-                result = model.generate_subtitles(
-                    path=file_path,
-                )
-                if result:
-                    cls._log("Generated subtitles for ", file_path)
-                else:
-                    cls._log("Failed to generate subtitles for ", file_path)
-        finally:
-            model.destroy()
+        with lockfile.open(mode="a") as status:
+            try:
+                cls._log("Processing possible video files: ", paths)
+                for file_path in paths:
+                    status.write(f"Processing file: {file_path}\n")
+                    status.flush()
+
+                    result = model.generate_subtitles(
+                        path=file_path,
+                    )
+                    if result:
+                        cls._log("Generated subtitles for ", file_path)
+                        status.write(f"Subtitles generated: {file_path}\n")
+                    else:
+                        cls._log("Failed to generate subtitles for ", file_path)
+                        status.write(f"Subtitles failed: {file_path}\n")
+                    status.write("\n")
+                    status.flush()
+            finally:
+                model.destroy()
 
     @classmethod
     def main(cls, paths: List[str]) -> bool:
