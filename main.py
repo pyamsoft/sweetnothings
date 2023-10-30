@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
+import os
 import sys
-import tempfile
 
 from pathlib import Path
 from traceback import print_exc
@@ -8,9 +8,11 @@ from typing import Any, List, Callable
 
 from sweetnothings.sweetnothings import SweetNothings
 
+_XDG_CACHE_HOME = os.getenv("XDG_CACHE_HOME", f"{Path.home()}")
+
 
 class Locker:
-    _LOCK_FILE_PATH = f"{tempfile.gettempdir()}/sweet-nothings.lock"
+    _LOCK_FILE_PATH = f"{_XDG_CACHE_HOME}/.cache/sweet-nothings.lock"
 
     @classmethod
     def _log(cls, *args: Any):
@@ -31,7 +33,7 @@ class Locker:
         try:
             cls._log("Claim lock file", cls._LOCK_FILE_PATH)
             p.touch()
-           
+
             on_lock_claimed(files)
             return True
         except Exception as _:
