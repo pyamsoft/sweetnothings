@@ -8,6 +8,21 @@ subtitles for video files
 Run script and pass one or more paths to video files on your
 machine.
 
+## How
+
+Build the project using the included script. You must have `podman`  
+installed on your real system.
+```bash
+$ ./bin/dockerize
+```
+
+Run the project with `podman` or use the convenience script included:
+```bash
+$ ./bin/sweets /path/to/my/media.mp4 /path/to/another/media.mkv
+```
+
+See what happens!
+
 ## License
 
 Apache 2
