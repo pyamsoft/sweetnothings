@@ -8,7 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-requests = "==2.31.0"
+requests = "==2.32.0"
 av = "==10.0.0"
 stable-ts = "==2.13.1"
 faster-whisper = "==0.9.0"
